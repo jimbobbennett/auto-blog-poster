@@ -1,0 +1,7 @@
+[FORMAT]
+
+# Maximum number of characters on a single line.
+max-line-length=160
+
+[MESSAGES CONTROL]
+disable=too-few-public-methods,too-many-instance-attributes
