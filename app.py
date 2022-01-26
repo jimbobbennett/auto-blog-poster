@@ -1,15 +1,11 @@
 """
-This app contains code to take a GitHub markdown file and convert it to a Dev.to post
+This app contains code to take a GitHub markdown file and convert it to a blog posts
+on platforms such as dev.to
 """
 import os
 
-from dotenv import load_dotenv
-
 from dev_to import post_to_dev_to, ReadmeParseError
 from github_access import GitHubAccess
-
-# Load environment variables - this includes GitHub API kets and dev.to API keys
-load_dotenv()
 
 # Get the DEV.to API key
 # This can be created from your Dev.to settings by following these instructions:
@@ -18,7 +14,8 @@ DEV_TO_API_KEY = os.environ['DEV_TO_API_KEY']
 
 # Get the DEV.to Organization if needed
 # This is used to post under different organizations
-DEV_TO_ORGANIZATION_ID = os.environ['DEV_TO_ORGANIZATION_ID']
+# If this is not set, the article is posted to the user only
+DEV_TO_ORGANIZATION_ID = os.getenv('DEV_TO_ORGANIZATION_ID', None)
 
 # Get the GitHub API key
 # This is a personal access token with access to the Reactor repo
@@ -29,28 +26,28 @@ REPO = os.environ['REPO']
 
 # Connect to GitHub
 gh = GitHubAccess(REPO, GITHUB_ACCESS_TOKEN)
-series_folders = gh.get_series_folders()
+post_folders = gh.get_post_folders()
 
-print(f'Processing series pages from {REPO}')
+print(f'Processing post pages from {REPO}')
 
-# Iterate through all the series pages in the repo
-for series_page in series_folders:
+# Iterate through all the post pages in the repo
+for post_page in post_folders:
     # Check if the page is outdated. If so, build a post.
-    if series_page.is_outdated:
+    if post_page.is_outdated:
         try:
-            print(f'Processing {series_page}')
+            print(f'Processing {post_page}')
 
-            post_to_dev_to(series_page, DEV_TO_API_KEY, DEV_TO_ORGANIZATION_ID) 
+            post_to_dev_to(post_page, DEV_TO_API_KEY, DEV_TO_ORGANIZATION_ID)
 
-            # Update the details in the series folder
-            print('Updating the series page in GitHub...')
-            series_page.commit_changes()
+            # Update the details in the post folder
+            print('Updating the post page in GitHub...')
+            post_page.commit_changes()
 
         except ReadmeParseError as ex:
             # If this fails then maybe the README isn't correctly formed.
             # Report and re-raise the error
-            error_message = f'Failed to parse the README file {series_page.root_folder.path} to create a Dev.to blog post\nException: {ex}'
+            error_message = f'Failed to parse the README file {post_page.root_folder.path} to create a Dev.to blog post\nException: {ex}'
             print(error_message)
             raise ReadmeParseError(error_message) from ex
     else:
-        print(f'{series_page} - no changes')
+        print(f'{post_page} - no changes')
