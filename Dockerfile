@@ -15,4 +15,4 @@ COPY entrypoint.sh entrypoint.sh
 RUN pip3 install -r requirements.txt
 
 # Execute the shell script as the entrypoint
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT /app/entrypoint.sh ${@}
