@@ -5,9 +5,9 @@ FROM python:3.9-slim-buster
 WORKDIR /app
 
 # Copy over the files
-COPY requirements.txt requirements.txt
-COPY *.py .
-COPY entrypoint.sh entrypoint.sh
+COPY requirements.txt /app/requirements.txt
+COPY *.py /app/
+COPY entrypoint.sh /app/entrypoint.sh
 
 # Install the Python requirements
 RUN pip3 install -r requirements.txt
