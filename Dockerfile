@@ -1,8 +1,8 @@
 # Create this docker file based off a Python 3.9 Linux image
 FROM python:3.9-slim-buster
 
-# Run everything from /github/workspace
-WORKDIR /github/workspace
+# Run everything from /app
+WORKDIR /app
 
 # Copy over the files
 COPY requirements.txt requirements.txt
@@ -15,4 +15,4 @@ COPY entrypoint.sh entrypoint.sh
 RUN pip3 install -r requirements.txt
 
 # Execute the shell script as the entrypoint
-ENTRYPOINT ["/github/workspace/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
